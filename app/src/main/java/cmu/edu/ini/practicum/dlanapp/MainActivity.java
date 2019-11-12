@@ -1,5 +1,13 @@
 package cmu.edu.ini.practicum.dlanapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 
@@ -27,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String chainUrl = "http://10.0.2.2:7545";
     private static DappToken dappToken;
     private static DlanCore dlanCore;
+    private PayTask payTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,38 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.depBtn).setOnClickListener(v -> new DepositDialog().show(getSupportFragmentManager(), "deposit dialog"));
         findViewById(R.id.exitBtn).setOnClickListener(v -> new ExitTask().execute());
         findViewById(R.id.refreshBtn).setOnClickListener(v -> new RefreshTask(this).execute());
+
+        // listen to WiFi status
+        BroadcastReceiver wifiConnReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int networkType = intent.getIntExtra(
+                        ConnectivityManager.EXTRA_NETWORK_TYPE, -1);
+                if (ConnectivityManager.TYPE_WIFI == networkType) {
+                    NetworkInfo networkInfo = intent
+                            .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                    WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    if (networkInfo != null && wifiManager != null && networkInfo.isConnected()) {
+                        // Connected to new WIFI
+                        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                        String ssid = wifiInfo.getSSID();
+                        // TODO: check if is dlan router, get back payment info
+                        payTask = new PayTask();
+                        payTask.execute();
+                    } else {
+                        try {
+                            payTask.cancel(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(wifiConnReceiver, filter);
     }
 
 
