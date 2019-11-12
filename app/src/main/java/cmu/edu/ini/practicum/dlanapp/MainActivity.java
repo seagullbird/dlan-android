@@ -59,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
                         // Connected to new WIFI
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         String ssid = wifiInfo.getSSID();
-                        // TODO: check if is dlan router
-                        payTask = new PayTask(credentials, balance);
-                        payTask.execute();
+                        if (WebUtils.isAAARouter(ssid)) {
+                            payTask = new PayTask(credentials, balance);
+                            payTask.execute();
+                        }
                     } else {
                         try {
                             payTask.cancel(true);

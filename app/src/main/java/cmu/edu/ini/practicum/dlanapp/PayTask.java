@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import org.apache.commons.codec.binary.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.web3j.abi.TypeEncoder;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
@@ -13,19 +12,13 @@ import org.web3j.crypto.Hash;
 import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class PayTask extends AsyncTask<Void, Void, Void> {
     private final OkHttpClient client = new OkHttpClient();
-    private final String server = "http://localhost";
     private final Credentials credentials;
     private int balance;
     private final int UNIT_PRICE = 1;
@@ -59,16 +52,7 @@ public class PayTask extends AsyncTask<Void, Void, Void> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), data.toString());
-        Request request = new Request.Builder()
-                .url(server + "/transaction")
-                .post(body)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            System.out.println(response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        WebUtils.sendTransaction(data);
     }
 
     private String genSignature(int a) {
