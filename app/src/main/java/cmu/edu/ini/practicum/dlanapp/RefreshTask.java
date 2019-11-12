@@ -4,12 +4,10 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 public class RefreshTask extends AsyncTask<String, Void, Integer> {
     @SuppressLint("StaticFieldLeak")
-    private final AppCompatActivity mainActivity;
-    RefreshTask(AppCompatActivity mainActivity) {
+    private final MainActivity mainActivity;
+    RefreshTask(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
@@ -21,6 +19,7 @@ public class RefreshTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer balance) {
         TextView balanceTextView = mainActivity.findViewById(R.id.curBalanceView);
+        mainActivity.setBalance(balance);
         balanceTextView.setText("Current Balance: " + balance);
     }
 

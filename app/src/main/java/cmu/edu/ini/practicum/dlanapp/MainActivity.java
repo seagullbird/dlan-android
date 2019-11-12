@@ -9,23 +9,15 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.apache.commons.codec.binary.Hex;
-import org.web3j.abi.TypeEncoder;
-import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.Hash;
-import org.web3j.crypto.Sign;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
     private static final String adminPr = "0x31b7c0ca2d8c19d050b5375d066ad974b1eb2cbaf080f9f58ae24fe45ccdd70a";
@@ -37,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private static DlanCore dlanCore;
     private PayTask payTask;
 
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    private int balance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.exitBtn).setOnClickListener(v -> new ExitTask().execute());
         findViewById(R.id.refreshBtn).setOnClickListener(v -> new RefreshTask(this).execute());
 
+        balance = WebUtils.getUserBalance(credentials.getAddress());
         // listen to WiFi status
         BroadcastReceiver wifiConnReceiver = new BroadcastReceiver() {
             @Override
@@ -60,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
                         // Connected to new WIFI
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         String ssid = wifiInfo.getSSID();
-                        // TODO: check if is dlan router, get back payment info
-                        payTask = new PayTask();
+                        // TODO: check if is dlan router
+                        payTask = new PayTask(credentials, balance);
                         payTask.execute();
                     } else {
                         try {
@@ -84,21 +83,6 @@ public class MainActivity extends AppCompatActivity {
         Web3j web3 = Web3j.build(new HttpService(chainUrl));
         dappToken = DappToken.load(dappTokenAddr, web3, credentials, new DefaultGasProvider());
         dlanCore = DlanCore.load(dlanCoreAddr, web3, credentials, new DefaultGasProvider());
-    }
-
-
-    private static void sendClicked(View v) {
-        // Spend 200 DlanToken
-        Uint256 a = new Uint256(BigInteger.valueOf(200));
-        String msgHash = Hash.sha3(TypeEncoder.encode(a));
-        Sign.SignatureData sigData = Sign.signPrefixedMessage(Numeric.hexStringToByteArray(msgHash), credentials.getEcKeyPair());
-
-        ByteBuffer buff = ByteBuffer.wrap(new byte[65]);
-        buff.put(sigData.getR());
-        buff.put(sigData.getS());
-        buff.put(sigData.getV());
-        byte[] sig = buff.array();
-        String sigStr = Hex.encodeHexString(sig);
     }
 
     public static void doDeposit(BigInteger value) throws Exception {
