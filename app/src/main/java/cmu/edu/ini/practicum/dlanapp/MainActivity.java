@@ -1,30 +1,24 @@
 package cmu.edu.ini.practicum.dlanapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
 
-import org.web3j.abi.datatypes.BytesType;
-import org.web3j.abi.datatypes.NumericType;
-import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.abi.datatypes.generated.Bytes32;
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.apache.commons.codec.binary.Hex;
+import org.web3j.abi.TypeEncoder;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Hash;
 import org.web3j.crypto.Sign;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
-import org.web3j.abi.TypeEncoder;
-import org.web3j.tx.gas.StaticGasProvider;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     private static final String adminPr = "0x31b7c0ca2d8c19d050b5375d066ad974b1eb2cbaf080f9f58ae24fe45ccdd70a";
@@ -36,9 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private static final Web3j web3 = Web3j.build(new HttpService(url));
     private static DappToken dappToken;
     private static DlanCore dlanCore;
-
-    // shared
-//    private static byte[] sigBytes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static void sendClicked(View v) {
         // Spend 200 DlanToken
-//        int a = 200;
-//        byte[] msgHash = Hash.sha3(BigInteger.valueOf(a).toByteArray());
-//
-//        Sign.SignatureData sig = Sign.signPrefixedMessage(msgHash, credentials.getEcKeyPair());
-//
-//        ByteBuffer buff = ByteBuffer.wrap(new byte[65]);
-//        buff.put(sig.getR());
-//        buff.put(sig.getS());
-//        buff.put(sig.getV());
-//        sigBytes = buff.array();
-//        System.out.println(Numeric.toHexString(sigBytes));
         Uint256 a = new Uint256(BigInteger.valueOf(200));
         String msgHash = Hash.sha3(TypeEncoder.encode(a));
         Sign.SignatureData sigData = Sign.signPrefixedMessage(Numeric.hexStringToByteArray(msgHash), credentials.getEcKeyPair());
@@ -109,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private static void challengeClicked(View v) {
         Uint256 a = new Uint256(BigInteger.valueOf(200));
         String msgHash = Hash.sha3(TypeEncoder.encode(a));
+        System.out.println("sha3 hash of encode(a) " + msgHash);
         Sign.SignatureData sigData = Sign.signPrefixedMessage(Numeric.hexStringToByteArray(msgHash), credentials.getEcKeyPair());
 
         ByteBuffer buff = ByteBuffer.wrap(new byte[65]);
@@ -116,13 +97,10 @@ public class MainActivity extends AppCompatActivity {
         buff.put(sigData.getS());
         buff.put(sigData.getV());
         byte[] sig = buff.array();
-
+        System.out.println(Hex.encodeHexString(sig));
         DlanCore operatorDlanCore = DlanCore.load(dlanCoreAddr, web3, Credentials.create(operatorPr), new DefaultGasProvider());
         try {
             operatorDlanCore.challenge(credentials.getAddress(), BigInteger.valueOf(200), sig).send();
-//            byte[] result = operatorDlanCore.test(BigInteger.valueOf(200)).send();
-//            System.out.println(Numeric.toHexString(result));
-
         } catch (Exception e) {
             e.printStackTrace();
         }
