@@ -15,10 +15,8 @@ import org.web3j.utils.Numeric;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-import okhttp3.OkHttpClient;
 
 public class PayTask extends AsyncTask<Void, Void, Void> {
-    private final OkHttpClient client = new OkHttpClient();
     private final Credentials credentials;
     private int balance;
     private final int UNIT_PRICE = 1;

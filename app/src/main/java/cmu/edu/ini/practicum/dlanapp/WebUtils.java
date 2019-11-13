@@ -12,8 +12,8 @@ import okhttp3.Response;
 
 class WebUtils {
     private static final OkHttpClient client = new OkHttpClient();
-    private static final String operatorServiceAddr = "";
-    private static final String aaaServiceAddr = "";
+    private static final String operatorServiceAddr = MainActivity.operatorServiceAddr;
+    private static final String aaaServiceAddr = MainActivity.aaaServiceAddr;
 
     static int getUserBalance(String address) {
         Request request = new Request.Builder()
@@ -28,10 +28,15 @@ class WebUtils {
         return 0;
     }
 
-    static boolean isAAARouter(String ssid) {
+    static boolean isAAARouter(String ip) {
         Request request = new Request.Builder()
-                .url(aaaServiceAddr)
+                .url(aaaServiceAddr + "/check-router?router=" + ip)
                 .build();
+        try (Response response = client.newCall(request).execute()) {
+            return Boolean.parseBoolean(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
