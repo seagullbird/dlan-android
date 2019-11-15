@@ -73,12 +73,15 @@ public class MainActivity extends AppCompatActivity {
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         String ip = Formatter.formatIpAddress(wifiInfo.getIpAddress());
                         if (WebUtils.isAAARouter(ip)) {
+                            System.out.println("checking ip " + ip);
                             payTask = new PayTask(credentials, balance);
                             payTask.execute();
                         }
                     } else {
                         try {
-                            payTask.cancel(true);
+                            if (payTask != null) {
+                                payTask.cancel(true);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
