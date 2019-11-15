@@ -17,7 +17,7 @@ class WebUtils {
 
     static int getUserBalance(String address) {
         Request request = new Request.Builder()
-                .url(operatorServiceAddr + "/balance?user=" + address)
+                .url(operatorServiceAddr + "/balance?address=" + address)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {

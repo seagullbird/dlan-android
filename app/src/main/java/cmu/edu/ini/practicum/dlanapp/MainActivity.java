@@ -22,17 +22,18 @@ import java.math.BigInteger;
 
 public class MainActivity extends AppCompatActivity {
     // configs
-    private static final String adminPr = "0x31b7c0ca2d8c19d050b5375d066ad974b1eb2cbaf080f9f58ae24fe45ccdd70a";
-    private static final String dappTokenAddr = "0xE4fC5F51269641BA65d538d5567517250b2F5390";
-    private static final String dlanCoreAddr = "0xaE7F1947640FF06F49f72b78fCFfBeBAB764A278";
-    private static final String chainUrl = "http://10.0.2.2:7545";
-    static final String operatorServiceAddr = "http://localhost";
+    private static final String adminPr = "0xaf750f912e497f746459387f1826c66297ba80a02bad7960c316cff3e80dbc04";
+    private static final String dappTokenAddr = "0xcC3a6f76dB1745c5387b6eBf69b6b1CA0441090f";
+    private static final String dlanCoreAddr = "0xCE7001904DfF8adF14C92243306BCb39879fEb7A";
+    private static final String chainUrl = "http://172.29.95.175:7545";
+    static final String operatorServiceAddr = "http://172.29.95.175:5000";
     static final String aaaServiceAddr = "http://localhost";
 
     private static final Credentials credentials = Credentials.create(adminPr);
     private static DappToken dappToken;
     private static DlanCore dlanCore;
     private PayTask payTask;
+    private BroadcastReceiver wifiConnReceiver;
 
     public void setBalance(int balance) {
         this.balance = balance;
@@ -41,17 +42,24 @@ public class MainActivity extends AppCompatActivity {
     private int balance;
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(wifiConnReceiver);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initContracts();
         findViewById(R.id.depBtn).setOnClickListener(v -> new DepositDialog().show(getSupportFragmentManager(), "deposit dialog"));
         findViewById(R.id.exitBtn).setOnClickListener(v -> new ExitTask().execute());
-        findViewById(R.id.refreshBtn).setOnClickListener(v -> new RefreshTask(this).execute());
+        findViewById(R.id.refreshBtn).setOnClickListener(v -> new RefreshTask(this).execute(credentials.getAddress()));
 
-        balance = WebUtils.getUserBalance(credentials.getAddress());
+        new RefreshTask(this).execute(credentials.getAddress());
         // listen to WiFi status
-        BroadcastReceiver wifiConnReceiver = new BroadcastReceiver() {
+        wifiConnReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int networkType = intent.getIntExtra(

@@ -13,6 +13,7 @@ public class RefreshTask extends AsyncTask<String, Void, Integer> {
 
     @Override
     protected Integer doInBackground(String... address) {
+
         return WebUtils.getUserBalance(address[0]);
     }
     @SuppressLint("SetTextI18n")
