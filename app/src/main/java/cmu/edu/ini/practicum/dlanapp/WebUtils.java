@@ -1,8 +1,17 @@
 package cmu.edu.ini.practicum.dlanapp;
 
+import org.apache.commons.codec.binary.Hex;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.web3j.abi.TypeEncoder;
+import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.Hash;
+import org.web3j.crypto.Sign;
+import org.web3j.utils.Numeric;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -40,7 +49,18 @@ class WebUtils {
         return false;
     }
 
-    static void sendTransaction(JSONObject data) {
+    static void sendTransaction(String address) {
+        JSONObject data;
+        try {
+            data = new JSONObject();
+            data.put("bal", MainActivity.balance);
+            data.put("signature", genSignature(MainActivity.balance));
+            data.put("address", address);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        System.out.println(data);
         RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), data.toString());
         Request request = new Request.Builder()
                 .url(operatorServiceAddr + "/transaction")
@@ -51,5 +71,16 @@ class WebUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String genSignature(int a) {
+        String msgHash = Hash.sha3(TypeEncoder.encode(new Uint256(BigInteger.valueOf(a))));
+        Sign.SignatureData sigData = Sign.signPrefixedMessage(Numeric.hexStringToByteArray(msgHash), MainActivity.getCredentials().getEcKeyPair());
+        ByteBuffer buff = ByteBuffer.wrap(new byte[65]);
+        buff.put(sigData.getR());
+        buff.put(sigData.getS());
+        buff.put(sigData.getV());
+        final byte[] sig = buff.array();
+        return new String(Hex.encodeHex(sig));
     }
 }

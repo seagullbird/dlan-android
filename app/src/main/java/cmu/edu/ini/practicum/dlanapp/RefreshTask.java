@@ -20,7 +20,7 @@ public class RefreshTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer balance) {
         TextView balanceTextView = mainActivity.findViewById(R.id.curBalanceView);
-        mainActivity.setBalance(balance);
+        MainActivity.balance = balance;
         balanceTextView.setText("Current Balance: " + balance);
     }
 

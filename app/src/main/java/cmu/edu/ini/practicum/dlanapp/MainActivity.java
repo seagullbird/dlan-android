@@ -1,15 +1,8 @@
 package cmu.edu.ini.practicum.dlanapp;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.format.Formatter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,24 +20,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String dlanCoreAddr = "0xCE7001904DfF8adF14C92243306BCb39879fEb7A";
     private static final String chainUrl = "http://172.29.95.175:7545";
     static final String operatorServiceAddr = "http://172.29.95.175:5000";
-    static final String aaaServiceAddr = "http://localhost";
+    static final String aaaServiceAddr = "http://34.70.67.230:8000";
 
     private static final Credentials credentials = Credentials.create(adminPr);
     private static DappToken dappToken;
     private static DlanCore dlanCore;
-    private PayTask payTask;
-    private BroadcastReceiver wifiConnReceiver;
+    static int balance;
 
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
-
-    private int balance;
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(wifiConnReceiver);
+    public static Credentials getCredentials() {
+        return credentials;
     }
 
     @Override
@@ -58,41 +42,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.refreshBtn).setOnClickListener(v -> new RefreshTask(this).execute(credentials.getAddress()));
 
         new RefreshTask(this).execute(credentials.getAddress());
-        // listen to WiFi status
-        wifiConnReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int networkType = intent.getIntExtra(
-                        ConnectivityManager.EXTRA_NETWORK_TYPE, -1);
-                if (ConnectivityManager.TYPE_WIFI == networkType) {
-                    NetworkInfo networkInfo = intent
-                            .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                    WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                    if (networkInfo != null && wifiManager != null && networkInfo.isConnected()) {
-                        // Connected to new WIFI
-                        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                        String ip = Formatter.formatIpAddress(wifiInfo.getIpAddress());
-                        if (WebUtils.isAAARouter(ip)) {
-                            System.out.println("checking ip " + ip);
-                            payTask = new PayTask(credentials, balance);
-                            payTask.execute();
-                        }
-                    } else {
-                        try {
-                            if (payTask != null) {
-                                payTask.cancel(true);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        };
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(wifiConnReceiver, filter);
+        registerReceiver(new WifiReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
 
