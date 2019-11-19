@@ -17,12 +17,21 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/curBalanceView"
+        android:id="@+id/curNftBalanceView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="@string/current_balance_0"
+        android:text="@string/current_nft_balance_0"
         app:layout_constraintBottom_toTopOf="@+id/refreshBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/curDlanBalanceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current_dlan_balance_0"
+        app:layout_constraintBottom_toTopOf="@+id/curNftBalanceView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

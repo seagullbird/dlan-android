@@ -24,7 +24,7 @@ class WebUtils {
     private static final String operatorServiceAddr = MainActivity.operatorServiceAddr;
     private static final String aaaServiceAddr = MainActivity.aaaServiceAddr;
 
-    static int getUserBalance(String address) {
+    static int getNftBalance(String address) {
         Request request = new Request.Builder()
                 .url(operatorServiceAddr + "/balance?address=" + address)
                 .build();

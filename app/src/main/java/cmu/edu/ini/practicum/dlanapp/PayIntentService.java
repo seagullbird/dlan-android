@@ -29,6 +29,7 @@ public class PayIntentService extends IntentService {
         shouldContinue = WebUtils.isAAARouter(ip);
         System.out.println("Pay service started");
 
+        MainActivity.updateNftBalance();
         while (MainActivity.balance > 0 && shouldContinue) {
             System.out.println("Current balance " + MainActivity.balance);
             WebUtils.sendTransaction(address);
@@ -40,5 +41,6 @@ public class PayIntentService extends IntentService {
             }
         }
         System.out.println("Pay service stopped");
+        stopSelf();
     }
 }

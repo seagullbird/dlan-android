@@ -59,7 +59,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void doExit() throws Exception {
-        int amount = WebUtils.getUserBalance(credentials.getAddress());
+        int amount = WebUtils.getNftBalance(credentials.getAddress());
         dlanCore.start_exit(BigInteger.valueOf(amount)).send();
+        PayIntentService.shouldContinue = false;
+    }
+
+    int getDlanBalance() {
+        try {
+            return dappToken.balanceOf(credentials.getAddress()).send().intValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    static void updateNftBalance() {
+        balance = WebUtils.getNftBalance(credentials.getAddress());
     }
 }

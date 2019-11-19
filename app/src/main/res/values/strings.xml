@@ -4,4 +4,6 @@
     <string name="current_balance_0">Current Balance: 0</string>
     <string name="deposit">Deposit</string>
     <string name="exit">Exit</string>
+    <string name="current_dlan_balance_0">current dlan balance: 0</string>
+    <string name="current_nft_balance_0">current nft balance: 0</string>
 </resources>
