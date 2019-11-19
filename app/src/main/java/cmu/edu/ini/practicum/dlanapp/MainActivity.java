@@ -15,11 +15,11 @@ import java.math.BigInteger;
 
 public class MainActivity extends AppCompatActivity {
     // configs
-    private static final String adminPr = "0xaf750f912e497f746459387f1826c66297ba80a02bad7960c316cff3e80dbc04";
-    private static final String dappTokenAddr = "0xcC3a6f76dB1745c5387b6eBf69b6b1CA0441090f";
-    private static final String dlanCoreAddr = "0xCE7001904DfF8adF14C92243306BCb39879fEb7A";
-    private static final String chainUrl = "http://172.29.95.175:7545";
-    static final String operatorServiceAddr = "http://172.29.95.175:5000";
+    private static final String adminPr = "0x31b7c0ca2d8c19d050b5375d066ad974b1eb2cbaf080f9f58ae24fe45ccdd70a";
+    private static final String dappTokenAddr = "0xE4fC5F51269641BA65d538d5567517250b2F5390";
+    private static final String dlanCoreAddr = "0xaE7F1947640FF06F49f72b78fCFfBeBAB764A278";
+    private static final String chainUrl = "http://10.0.0.241:7545";
+    static final String operatorServiceAddr = "http://10.0.0.241:5000";
     static final String aaaServiceAddr = "http://34.70.67.230:8000";
 
     private static final Credentials credentials = Credentials.create(adminPr);
