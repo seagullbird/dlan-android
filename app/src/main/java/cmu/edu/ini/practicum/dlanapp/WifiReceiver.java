@@ -22,10 +22,7 @@ public class WifiReceiver extends BroadcastReceiver {
                 // Connected to new WIFI
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                 System.out.println("Connected to " + wifiInfo.getSSID());
-                String ip = Formatter.formatIpAddress(wifiInfo.getIpAddress());
-                if (wifiInfo.getSSID().equals("\"CMU-SECURE\"")) {
-                    ip = "73.71.12.184";
-                }
+                String ip = Formatter.formatIpAddress(wifiManager.getDhcpInfo().gateway);
                 Intent startPayIntent = new Intent(context, PayIntentService.class);
                 startPayIntent.putExtra("ip", ip);
                 context.startService(startPayIntent);
