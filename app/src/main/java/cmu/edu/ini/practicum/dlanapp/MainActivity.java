@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initContracts();
-        findViewById(R.id.depBtn).setOnClickListener(v -> new DepositDialog().show(getSupportFragmentManager(), "deposit dialog"));
+        findViewById(R.id.depBtn).setOnClickListener(v -> new DepositDialog(this).show(getSupportFragmentManager(), "deposit dialog"));
         findViewById(R.id.exitBtn).setOnClickListener(v -> new ExitTask().execute());
         findViewById(R.id.refreshBtn).setOnClickListener(v -> new RefreshTask(this).execute(credentials.getAddress()));
 

@@ -42,5 +42,6 @@ public class PayIntentService extends IntentService {
         }
         System.out.println("Pay service stopped");
         stopSelf();
+        shouldContinue = false;
     }
 }
