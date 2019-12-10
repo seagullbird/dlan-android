@@ -21,8 +21,8 @@ import okhttp3.Response;
 
 class WebUtils {
     private static final OkHttpClient client = new OkHttpClient();
-    private static final String operatorServiceAddr = MainActivity.operatorServiceAddr;
-    private static final String aaaServiceAddr = MainActivity.aaaServiceAddr;
+    private static final String operatorServiceAddr = MainActivity.serverAddr + ":5000";
+    private static final String aaaServiceAddr = MainActivity.serverAddr + ":8000";
 
     static int getNftBalance(String address) {
         Request request = new Request.Builder()

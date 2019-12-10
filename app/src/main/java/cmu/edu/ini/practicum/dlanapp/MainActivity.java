@@ -15,12 +15,11 @@ import java.math.BigInteger;
 
 public class MainActivity extends AppCompatActivity {
     // configs
+    static final String serverAddr = "http://34.67.182.249";
     private static final String adminPr = "0x31b7c0ca2d8c19d050b5375d066ad974b1eb2cbaf080f9f58ae24fe45ccdd70a";
     private static final String dappTokenAddr = "0xE4fC5F51269641BA65d538d5567517250b2F5390";
     private static final String dlanCoreAddr = "0xaE7F1947640FF06F49f72b78fCFfBeBAB764A278";
-    private static final String chainUrl = "http://34.67.182.249:7545";
-    static final String operatorServiceAddr = "http://34.67.182.249:5000";
-    static final String aaaServiceAddr = "http://34.67.182.249:8000";
+    private static final int chainPort = 7545;
 
     private static final Credentials credentials = Credentials.create(adminPr);
     private static DappToken dappToken;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initContracts() {
-        Web3j web3 = Web3j.build(new HttpService(chainUrl));
+        Web3j web3 = Web3j.build(new HttpService(serverAddr + ":" + chainPort));
         dappToken = DappToken.load(dappTokenAddr, web3, credentials, new DefaultGasProvider());
         dlanCore = DlanCore.load(dlanCoreAddr, web3, credentials, new DefaultGasProvider());
     }
